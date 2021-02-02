@@ -27,10 +27,10 @@ public class SelectDevicesService {
                 return selectAllDevices(jdbcTemplate);
             case "brand":
                 return selectDeviceFilteredBrand(jdbcTemplate);
-//            case "lessPrice":
-//                return selectDeviceFilteredPriceLess(jdbcTemplate);
-//            case "morePrice":
-//                return selectDeviceFilteredPriceMore(jdbcTemplate);
+            case "lessThanPrice":
+                return selectDeviceFilteredPriceLess(jdbcTemplate);
+            case "moreThanPrice":
+                return selectDeviceFilteredPriceMore(jdbcTemplate);
 //            case "keyWord":
 //                return selectDeviceFilteredKeyWord(jdbcTemplate);
             default:
@@ -49,15 +49,19 @@ public class SelectDevicesService {
     }
 
     private List<Device> selectDeviceFilteredBrand(JdbcTemplate jdbcTemplate) {
-        String sql = "select * from " + getTableName() + " where ?=?";
-        return jdbcTemplate.query(sql, new Object[]{getBrandField(), filterValue}, new DeviceMapper());
+        String sql = "select * from " + getTableName() + " where " + getBrandField() + "='" +filterValue + "';";
+        return jdbcTemplate.query(sql, new DeviceMapper());
     }
 
-//    private List<Device> selectDeviceFilteredPriceLess(JdbcTemplate jdbcTemplate) {
-//    }
-//
-//    private List<Device> selectDeviceFilteredPriceMore(JdbcTemplate jdbcTemplate) {
-//    }
+    private List<Device> selectDeviceFilteredPriceLess(JdbcTemplate jdbcTemplate) {
+        String sql = "select * from " + getTableName() + " where " + getPriceField() + "<=" +filterValue + ";";
+        return jdbcTemplate.query(sql, new DeviceMapper());
+    }
+
+    private List<Device> selectDeviceFilteredPriceMore(JdbcTemplate jdbcTemplate) {
+        String sql = "select * from " + getTableName() + " where " + getPriceField() + ">=" +filterValue + ";";
+        return jdbcTemplate.query(sql, new DeviceMapper());
+    }
 
     private String getTableName() {
         return properties.getProperty("device.table");
@@ -68,7 +72,11 @@ public class SelectDevicesService {
     }
 
     private String getBrandField() {
-        return "brand1";
+        return "brand";
+    }
+
+    private String getPriceField() {
+        return "price";
     }
 
 }
