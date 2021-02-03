@@ -7,6 +7,7 @@ public class Device {
     private String model;
     private String description;
     private Double price;
+    private Double rating;
 
     public int getId() {
         return id;
@@ -54,6 +55,14 @@ public class Device {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 
     @Override

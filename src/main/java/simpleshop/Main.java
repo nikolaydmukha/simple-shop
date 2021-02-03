@@ -47,6 +47,9 @@ public class Main {
                 case "4":
                     getBrand(scanner);
                     break;
+                case "5":
+                    getKeyWord(scanner);
+                    break;
             }
         }
     }
@@ -55,6 +58,12 @@ public class Main {
         System.out.println("Введите производителя:");
         String brand = scanner.nextLine();
         showItems("brand", brand);
+    }
+
+    private static void getKeyWord(Scanner scanner) {
+        System.out.println("Введите слово для поиска:");
+        String keyWord = scanner.nextLine();
+        showItems("keyWord", keyWord);
     }
 
     private static void getPrice(String point, Scanner scanner) {
@@ -78,8 +87,6 @@ public class Main {
             }
         }
     }
-
-
 
     private static void showItems(String filterType, String filterValue) {
         ItemsPrinter printer = new ItemsPrinter();

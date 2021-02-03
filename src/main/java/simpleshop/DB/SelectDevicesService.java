@@ -2,7 +2,6 @@ package simpleshop.DB;
 
 import exceptions.UnknownFilterException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import simpleshop.device.Device;
 import simpleshop.device.DeviceMapper;
 
 import java.util.List;
@@ -21,46 +20,58 @@ public class SelectDevicesService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Device> makeSelect() throws UnknownFilterException {
+    public <T> List<T> makeSelect() throws UnknownFilterException {
         switch (filterType) {
             case "":
-                return selectAllDevices(jdbcTemplate);
+                return selectAllDevices();
             case "brand":
-                return selectDeviceFilteredBrand(jdbcTemplate);
+                return selectDeviceFilteredBrand();
             case "lessThanPrice":
-                return selectDeviceFilteredPriceLess(jdbcTemplate);
+                return selectDeviceFilteredPriceLess();
             case "moreThanPrice":
-                return selectDeviceFilteredPriceMore(jdbcTemplate);
-//            case "keyWord":
-//                return selectDeviceFilteredKeyWord(jdbcTemplate);
+                return selectDeviceFilteredPriceMore();
+            case "keyWord":
+                return selectDeviceFilteredKeyWord();
+            case "getTableColumnsName":
+                return getTableColumnsName();
             default:
                 throw new UnknownFilterException("Неверно указан фильтр поиска данных...");
         }
     }
 
-//    private List<Device> selectDeviceFilteredKeyWord(JdbcTemplate jdbcTemplate) {
-//        return jdbcTemplate.query("select * from " + getTableName() + " where ? like '%?%'",
-//                new Object[]{getTableName(), getDescriptionField(), filterValue}, new DeviceMapper());
-//    }
+    private <T> List<T> selectDeviceFilteredKeyWord() {
+        String sql = "select * from " + getTableName() + " where " + getDescriptionField() + " like '%" + filterValue + "%';";
+        return jdbcTemplate.query(sql, new DeviceMapper());
+    }
 
-    private List<Device> selectAllDevices(JdbcTemplate jdbcTemplate) {
+    private <T> List<T> selectAllDevices() {
         String sql = "select * from " + getTableName();
         return jdbcTemplate.query(sql, new DeviceMapper());
     }
 
-    private List<Device> selectDeviceFilteredBrand(JdbcTemplate jdbcTemplate) {
-        String sql = "select * from " + getTableName() + " where " + getBrandField() + "='" +filterValue + "';";
+    private <T> List<T> selectDeviceFilteredBrand() {
+        String sql = "select * from " + getTableName() + " where " + getBrandField() + "='" + filterValue + "';";
         return jdbcTemplate.query(sql, new DeviceMapper());
     }
 
-    private List<Device> selectDeviceFilteredPriceLess(JdbcTemplate jdbcTemplate) {
-        String sql = "select * from " + getTableName() + " where " + getPriceField() + "<=" +filterValue + ";";
+    private <T> List<T> selectDeviceFilteredPriceLess() {
+        String sql = "select * from " + getTableName() + " where " + getPriceField() + "<=" + filterValue + ";";
         return jdbcTemplate.query(sql, new DeviceMapper());
     }
 
-    private List<Device> selectDeviceFilteredPriceMore(JdbcTemplate jdbcTemplate) {
-        String sql = "select * from " + getTableName() + " where " + getPriceField() + ">=" +filterValue + ";";
+    private <T> List<T> selectDeviceFilteredPriceMore() {
+        String sql = "select * from " + getTableName() + " where " + getPriceField() + ">=" + filterValue + ";";
         return jdbcTemplate.query(sql, new DeviceMapper());
+    }
+
+    private <T> List<T> getTableColumnsName() {
+        String sql = "select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + getDBName() + "' AND TABLE_NAME = '" + getTableName() + "';";
+        List<String> columns = jdbcTemplate.queryForList(sql, String.class);
+        return (List<T>) columns;
+    }
+
+    private String getDBName() {
+        return properties.getProperty("db.name");
     }
 
     private String getTableName() {
