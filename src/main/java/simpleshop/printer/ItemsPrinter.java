@@ -8,21 +8,16 @@ import simpleshop.DB.DBConnector;
 import simpleshop.DB.SelectDevicesService;
 import simpleshop.device.Device;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ItemsPrinter {
 
 
-    public void itemsPrinter(List<Device> allItems) throws EmptyResultException {
+    public void itemsPrinter(List<Device> allItems) throws EmptyResultException, UnknownFilterException {
         validateSize(allItems);
-        List<String> columnsName = new ArrayList<>();
-        try {
-            columnsName = prepareTableColumns();
-        } catch (UnknownFilterException ex) {
-            System.out.println(ex.getMessage());
-        }
+        List<String> columnsName = prepareTableColumns();
+
         String[][] data = new String[allItems.size()][columnsName.size()];
         int i = 0;
         for (Device device : allItems) {

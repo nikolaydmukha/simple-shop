@@ -23,15 +23,7 @@ public class Main {
         String filterType = "";
         String filterValue = "";
         while (true) {
-            System.out.println(
-                    "Выберите действие:\n" +
-                            "1. Показать все товары;\n" +
-                            "2. Фильтр по цене(>);\n" +
-                            "3. Фильтр по цене(<);\n" +
-                            "4. Фильтр по производителям;\n" +
-                            "5. Фильтр по ключевому слову\n" +
-                            "6. Рейтинг товаров;\n" +
-                            "0. Выход;");
+            showMenuActions();
             String point = scanner.nextLine();
             switch (point) {
                 case "0":
@@ -52,6 +44,18 @@ public class Main {
                     break;
             }
         }
+    }
+
+    private static void showMenuActions() {
+        System.out.println(
+                "Выберите действие:\n" +
+                        "1. Показать все товары;\n" +
+                        "2. Фильтр по цене(>);\n" +
+                        "3. Фильтр по цене(<);\n" +
+                        "4. Фильтр по производителям;\n" +
+                        "5. Фильтр по ключевому слову\n" +
+                        "6. Рейтинг товаров;\n" +
+                        "0. Выход;");
     }
 
     private static void getBrand(Scanner scanner) {
