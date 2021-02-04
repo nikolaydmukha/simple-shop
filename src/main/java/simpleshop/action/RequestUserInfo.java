@@ -49,4 +49,9 @@ public class RequestUserInfo {
         }
     }
 
+    public static void sortByRating(Scanner scanner) {
+        System.out.println("Какая категория товаров интересует?");
+        String category = scanner.nextLine();
+        printer.showItems("findByRating", category);
+    }
 }

@@ -36,6 +36,8 @@ public class SelectDevicesServiceAction {
                 return selectDeviceFilteredKeyWord();
             case "getTableColumnsName":
                 return getTableColumnsName();
+            case "findByRating":
+                return selectDeviceFilteredRating();
             default:
                 throw new UnknownFilterException("Неверно указан фильтр поиска данных...");
         }
@@ -72,6 +74,11 @@ public class SelectDevicesServiceAction {
         return (List<T>) columns;
     }
 
+    private <T> List<T> selectDeviceFilteredRating() {
+        String sql = "select * from " + getTableName() + " where " + getTypeField() + "='" + filterValue + "' ORDER BY " + getRatingField() + " DESC;";
+        return jdbcTemplate.query(sql, new DeviceMapper());
+    }
+
     private String getDBName() {
         return properties.getProperty("db.name");
     }
@@ -92,4 +99,11 @@ public class SelectDevicesServiceAction {
         return "price";
     }
 
+    private String getTypeField() {
+        return "type";
+    }
+
+    private String getRatingField() {
+        return "rating";
+    }
 }
