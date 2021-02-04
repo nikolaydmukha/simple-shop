@@ -1,26 +1,28 @@
-package simpleshop.DB;
+package simpleshop.action;
 
 import exceptions.UnknownFilterException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import simpleshop.DB.DBProperties;
 import simpleshop.device.DeviceMapper;
 
+import java.net.ConnectException;
 import java.util.List;
 import java.util.Properties;
 
-public class SelectDevicesService {
+public class SelectDevicesServiceAction {
 
     private JdbcTemplate jdbcTemplate;
     private String filterType;
     private String filterValue;
     private Properties properties = new DBProperties().getProperties();
 
-    public SelectDevicesService(String filterType, String filterValue, JdbcTemplate jdbcTemplate) {
+    public SelectDevicesServiceAction(String filterType, String filterValue, JdbcTemplate jdbcTemplate) {
         this.filterType = filterType;
         this.filterValue = filterValue;
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public <T> List<T> makeSelect() throws UnknownFilterException {
+    public <T> List<T> makeSelect() throws UnknownFilterException, ConnectException {
         switch (filterType) {
             case "":
                 return selectAllDevices();

@@ -1,5 +1,7 @@
 package simpleshop.device;
 
+import java.util.Formatter;
+
 public class Device {
     private int id;
     private String type;
@@ -67,7 +69,8 @@ public class Device {
 
     @Override
     public String toString() {
-
-        return super.toString();
+        Formatter f = new Formatter();
+        f.format("%s %s %s, рейтинг %.2f", getType(), getBrand(), getModel(), getRating());
+        return f.toString();
     }
 }
