@@ -3,6 +3,7 @@ package simpleshop.device;
 import java.util.Formatter;
 
 public class Device {
+
     private int id;
     private String type;
     private String brand;

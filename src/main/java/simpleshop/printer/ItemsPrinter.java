@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ItemsPrinter {
+
     private static ItemsPrinter instance;
+    private static DBConnector dbConnector = DBConnector.getInstance();
+    private static ItemsPrinter printer = new ItemsPrinter();
 
     public static ItemsPrinter getInstance() {
         if (instance == null) {
@@ -46,7 +49,6 @@ public class ItemsPrinter {
     }
 
     private List<String> prepareTableColumns() throws UnknownFilterException, ConnectException {
-        DBConnector dbConnector = new DBConnector();
         SelectDevicesServiceAction selectDevicesService = new SelectDevicesServiceAction("getTableColumnsName", null, dbConnector.prepareJDBC());
         List<String> columns = selectDevicesService.makeSelect();
         List<String> upperColumnsName = columns.stream()
@@ -63,8 +65,6 @@ public class ItemsPrinter {
     }
 
     public static void showItems(String filterType, String filterValue) {
-        ItemsPrinter printer = new ItemsPrinter();
-        DBConnector dbConnector = new DBConnector();
         SelectDevicesServiceAction selectDevicesService = new SelectDevicesServiceAction(filterType, filterValue, dbConnector.prepareJDBC());
         try {
             List<Device> devices = selectDevicesService.makeSelect();
@@ -73,7 +73,7 @@ public class ItemsPrinter {
             System.err.println(ex.getMessage());
         } catch (UnknownFilterException ex) {
             System.err.println(ex.getMessage());
-        }catch (ConnectException ex){
+        } catch (ConnectException ex) {
             System.err.println(ex.getMessage());
         }
     }

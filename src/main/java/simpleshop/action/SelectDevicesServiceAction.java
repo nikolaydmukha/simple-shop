@@ -38,9 +38,23 @@ public class SelectDevicesServiceAction {
                 return getTableColumnsName();
             case "findByRating":
                 return selectDeviceFilteredRating();
+            case "getTypes":
+                return getTypes();
             default:
                 throw new UnknownFilterException("Неверно указан фильтр поиска данных...");
         }
+    }
+
+    private <T> List<T> getTableColumnsName() {
+        String sql = "select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + getDBName() + "' AND TABLE_NAME = '" + getTableName() + "';";
+        List<String> columns = jdbcTemplate.queryForList(sql, String.class);
+        return (List<T>) columns;
+    }
+
+    private <T> List<T> getTypes() {
+        String sql = "select " + getTypeField() + " from " + getTableName() + " group by " + getTypeField() + ";";
+        List<String> types = jdbcTemplate.queryForList(sql, String.class);
+        return (List<T>) types;
     }
 
     private <T> List<T> selectDeviceFilteredKeyWord() {
@@ -66,12 +80,6 @@ public class SelectDevicesServiceAction {
     private <T> List<T> selectDeviceFilteredPriceMore() {
         String sql = "select * from " + getTableName() + " where " + getPriceField() + ">=" + filterValue + ";";
         return jdbcTemplate.query(sql, new DeviceMapper());
-    }
-
-    private <T> List<T> getTableColumnsName() {
-        String sql = "select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + getDBName() + "' AND TABLE_NAME = '" + getTableName() + "';";
-        List<String> columns = jdbcTemplate.queryForList(sql, String.class);
-        return (List<T>) columns;
     }
 
     private <T> List<T> selectDeviceFilteredRating() {

@@ -4,6 +4,7 @@ import exceptions.UnknownFilterException;
 import simpleshop.action.RequestUserInfo;
 import simpleshop.printer.ItemsPrinter;
 
+import java.net.ConnectException;
 import java.util.Scanner;
 
 public class Main {
@@ -19,11 +20,13 @@ public class Main {
                 menu(scanner);
             } catch (UnknownFilterException ex) {
                 System.err.println(ex.getMessage());
+            }catch (ConnectException ex){
+                System.err.println(ex.getMessage());
             }
         }
     }
 
-    private static void menu(Scanner scanner) throws UnknownFilterException {
+    private static void menu(Scanner scanner) throws UnknownFilterException, ConnectException {
         String filterType = "";
         String filterValue = "";
         while (true) {
@@ -66,7 +69,7 @@ public class Main {
                         "4. Фильтр по производителям;\n" +
                         "5. Фильтр по ключевому слову\n" +
                         "6. Рейтинг товаров;\n" +
-                        "7. Купить товар;" +
+                        "7. Купить товар;\n" +
                         "0. Выход;");
     }
 }

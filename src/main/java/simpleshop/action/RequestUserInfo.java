@@ -1,11 +1,17 @@
 package simpleshop.action;
 
+import exceptions.UnknownFilterException;
+import simpleshop.DB.DBConnector;
 import simpleshop.printer.ItemsPrinter;
 
+import java.net.ConnectException;
+import java.util.List;
 import java.util.Scanner;
 
 public class RequestUserInfo {
+
     private static ItemsPrinter printer = ItemsPrinter.getInstance();
+    private static DBConnector dbConnector = DBConnector.getInstance();
     private static RequestUserInfo instance;
 
     public static RequestUserInfo getInstance() {
@@ -49,7 +55,12 @@ public class RequestUserInfo {
         }
     }
 
-    public static void sortByRating(Scanner scanner) {
+    public static void sortByRating(Scanner scanner) throws UnknownFilterException, ConnectException {
+        System.out.println("Список доступных категорий");
+        SelectDevicesServiceAction selectTypes = new SelectDevicesServiceAction("getTypes", null, dbConnector.prepareJDBC());
+        List<String> types = selectTypes.makeSelect();
+        types.stream().forEach(System.out::println);
+
         System.out.println("Какая категория товаров интересует?");
         String category = scanner.nextLine();
         printer.showItems("findByRating", category);
