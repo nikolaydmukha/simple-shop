@@ -21,19 +21,19 @@ public class RequestUserInfo {
         return instance;
     }
 
-    public static void getBrand(Scanner scanner) {
+    public void getBrand(Scanner scanner) {
         System.out.println("Введите производителя:");
         String brand = scanner.nextLine();
         printer.showItems("brand", brand);
     }
 
-    public static void getKeyWord(Scanner scanner) {
+    public void getKeyWord(Scanner scanner) {
         System.out.println("Введите слово для поиска:");
         String keyWord = scanner.nextLine();
         printer.showItems("keyWord", keyWord);
     }
 
-    public static void getPrice(String point, Scanner scanner) {
+    public void getPrice(String point, Scanner scanner) {
         String filterType;
         if (point == "2") {
             System.out.println("Введите минимальную цену:");
@@ -55,14 +55,29 @@ public class RequestUserInfo {
         }
     }
 
-    public static void sortByRating(Scanner scanner) throws UnknownFilterException, ConnectException {
-        System.out.println("Список доступных категорий");
+    private String getCategoryName(Scanner scanner) {
+        System.out.println("Какая категория товаров интересует?");
+        String category = scanner.nextLine();
+        return category;
+    }
+
+    private void categoriesList() throws UnknownFilterException, ConnectException {
+        System.out.println("Список доступных категорий:");
         SelectDevicesServiceAction selectTypes = new SelectDevicesServiceAction("getTypes", null, dbConnector.prepareJDBC());
         List<String> types = selectTypes.makeSelect();
         types.stream().forEach(System.out::println);
+    }
 
-        System.out.println("Какая категория товаров интересует?");
-        String category = scanner.nextLine();
+    public void sortByRating(Scanner scanner) throws UnknownFilterException, ConnectException {
+        categoriesList();
+        String category = getCategoryName(scanner);
+        printer.showItems("findByRating", category);
+    }
+
+    public void prepareByeDevice(Scanner scanner) throws UnknownFilterException, ConnectException {
+        categoriesList();
+        String category = getCategoryName(scanner);
+        System.out.println("Список доступных товаров");
         printer.showItems("findByRating", category);
     }
 }

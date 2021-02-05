@@ -11,6 +11,7 @@ public class Device {
     private String description;
     private Double price;
     private Double rating;
+    private int quality;
 
     public int getId() {
         return id;
@@ -66,6 +67,14 @@ public class Device {
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public int getQuality() {
+        return quality;
+    }
+
+    public void setQuality(int quality) {
+        this.quality = quality;
     }
 
     @Override

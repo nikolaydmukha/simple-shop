@@ -52,7 +52,7 @@ public class Main {
                     getUserWish.sortByRating(scanner);
                     break;
                 case "7":
-                    getUserWish.getKeyWord(scanner);
+                    getUserWish.prepareByeDevice(scanner);
                     break;
                 default:
                     throw new UnknownFilterException("Нет подходящего пункта меню!");

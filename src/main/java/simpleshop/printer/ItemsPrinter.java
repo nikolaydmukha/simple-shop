@@ -43,6 +43,7 @@ public class ItemsPrinter {
             data[i][3] = device.getDescription();
             data[i][4] = device.getPrice().toString();
             data[i][5] = device.getRating().toString();
+            data[i][6] = String.valueOf(device.getQuality());
             i++;
         }
         return data;
@@ -64,7 +65,7 @@ public class ItemsPrinter {
         }
     }
 
-    public static void showItems(String filterType, String filterValue) {
+    public void showItems(String filterType, String filterValue) {
         SelectDevicesServiceAction selectDevicesService = new SelectDevicesServiceAction(filterType, filterValue, dbConnector.prepareJDBC());
         try {
             List<Device> devices = selectDevicesService.makeSelect();
