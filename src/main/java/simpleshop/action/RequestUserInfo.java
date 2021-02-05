@@ -84,13 +84,24 @@ public class RequestUserInfo {
         System.out.println("Список доступных товаров");
         List<Device> devices = printer.showItems("findByRating", category);
         int id = getNumberFromUser("Введите id товара, который хотите купить: ", scanner);
+        int indexOfItem = getIndex(devices, id);
+        bucket.addItemToBucket(devices.get(indexOfItem));
+        reserveItem(id, devices.get(indexOfItem).getQuantity());
+        System.out.println("Товар добавлен в корзину\n");
+    }
+
+    private int getIndex(List<Device> devices, int id) {
         int i;
         for (i = 0; i < devices.size(); i++) {
             if (devices.get(i).getId() == id){
                 break;
             }
         }
-        bucket.addItemToBucket(devices.get(i));
-        System.out.println(bucket.getUsersBucket().get(0).getDescription());
+        return i;
+    }
+
+    private void reserveItem(int id, int quantity) throws UnknownFilterException, ConnectException {
+        SelectDevicesServiceAction update = new SelectDevicesServiceAction(null, null, dbConnector.prepareJDBC());
+        update.makeUpdateQuantity(id, --quantity);
     }
 }

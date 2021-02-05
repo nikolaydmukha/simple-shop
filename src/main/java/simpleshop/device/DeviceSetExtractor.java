@@ -17,7 +17,7 @@ public class DeviceSetExtractor implements ResultSetExtractor {
         device.setDescription(rs.getString(5));
         device.setPrice(Double.parseDouble(rs.getString(6)));
         device.setRating(Double.parseDouble(rs.getString(7)));
-        device.setQuality(Integer.parseInt(rs.getString(8)));
+        device.setQuantity(Integer.parseInt(rs.getString(8)));
         return device;
     }
 

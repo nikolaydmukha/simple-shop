@@ -44,7 +44,7 @@ public class ItemsPrinter {
             data[i][4] = device.getDescription();
             data[i][5] = device.getPrice().toString();
             data[i][6] = device.getRating().toString();
-            data[i][7] = String.valueOf(device.getQuality());
+            data[i][7] = String.valueOf(device.getQuantity());
             i++;
         }
         return data;

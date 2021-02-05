@@ -46,6 +46,12 @@ public class SelectDevicesServiceAction {
         }
     }
 
+    public void makeUpdateQuantity(int id, int quantity) throws UnknownFilterException, ConnectException {
+        Formatter f = new Formatter();
+        f.format("update %s set %s = %d where %s = %d", getTableName(), getQuantityField(), quantity, getIdField(), id);
+        jdbcTemplate.update(f.toString());
+    }
+
     private <T> List<T> getTableColumnsName() {
         Formatter f = new Formatter();
         f.format("select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '%s' AND TABLE_NAME = '%s';", getDBName(), getTableName());
@@ -63,42 +69,42 @@ public class SelectDevicesServiceAction {
     private <T> List<T> selectDeviceFilteredKeyWord() {
         Formatter f = new Formatter();
         f.format("select * from %s where %s like \'%%%s%%\' and %s!=0;",
-                getTableName(), getDescriptionField(), filterValue, getQualityField());
+                getTableName(), getDescriptionField(), filterValue, getQuantityField());
         return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectAllDevices() {
         Formatter f = new Formatter();
         f.format("select * from %s where %s!=0;",
-                getTableName(), getQualityField());
+                getTableName(), getQuantityField());
         return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectDeviceFilteredBrand() {
         Formatter f = new Formatter();
         f.format("select * from %s where %s='%s' and %s!=0;",
-                getTableName(), getBrandField(), filterValue, getQualityField());
+                getTableName(), getBrandField(), filterValue, getQuantityField());
         return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectDeviceFilteredPriceLess() {
         Formatter f = new Formatter();
         f.format("select * from %s where %s <= %s and %s!=0;",
-                getTableName(), getPriceField(), filterValue, getQualityField());
+                getTableName(), getPriceField(), filterValue, getQuantityField());
         return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectDeviceFilteredPriceMore() {
         Formatter f = new Formatter();
         f.format("select * from %s where %s >= %s and %s!=0;",
-                getTableName(), getPriceField(), filterValue, getQualityField());
+                getTableName(), getPriceField(), filterValue, getQuantityField());
         return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectDeviceFilteredRating() {
         Formatter f = new Formatter();
         f.format("select * from %s where %s='%s' and %s!=0 ORDER BY %s DESC;",
-                getTableName(), getTypeField(), filterValue, getQualityField(), getRatingField());
+                getTableName(), getTypeField(), filterValue, getQuantityField(), getRatingField());
         return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
@@ -117,6 +123,9 @@ public class SelectDevicesServiceAction {
     private String getBrandField() {
         return "brand";
     }
+    private String getIdField() {
+        return "id";
+    }
 
     private String getPriceField() {
         return "price";
@@ -130,7 +139,7 @@ public class SelectDevicesServiceAction {
         return "rating";
     }
 
-    private String getQualityField() {
-        return "quality";
+    private String getQuantityField() {
+        return "quantity";
     }
 }
