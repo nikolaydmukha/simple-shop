@@ -1,11 +1,12 @@
 package simpleshop.action;
 
-import exceptions.UnknownFilterException;
+import simpleshop.exceptions.UnknownFilterException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import simpleshop.DB.DBProperties;
 import simpleshop.device.DeviceMapper;
 
 import java.net.ConnectException;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,45 +47,59 @@ public class SelectDevicesServiceAction {
     }
 
     private <T> List<T> getTableColumnsName() {
-        String sql = "select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + getDBName() + "' AND TABLE_NAME = '" + getTableName() + "';";
-        List<String> columns = jdbcTemplate.queryForList(sql, String.class);
+        Formatter f = new Formatter();
+        f.format("select COLUMN_NAME from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '%s' AND TABLE_NAME = '%s';", getDBName(), getTableName());
+        List<String> columns = jdbcTemplate.queryForList(f.toString(), String.class);
         return (List<T>) columns;
     }
 
     private <T> List<T> getTypes() {
-        String sql = "select " + getTypeField() + " from " + getTableName() + " group by " + getTypeField() + ";";
-        List<String> types = jdbcTemplate.queryForList(sql, String.class);
+        Formatter f = new Formatter();
+        f.format("select %s from %s group by %s;", getTypeField(), getTableName(), getTypeField());
+        List<String> types = jdbcTemplate.queryForList(f.toString(), String.class);
         return (List<T>) types;
     }
 
     private <T> List<T> selectDeviceFilteredKeyWord() {
-        String sql = "select * from " + getTableName() + " where " + getDescriptionField() + " like '%" + filterValue + "%';";
-        return jdbcTemplate.query(sql, new DeviceMapper());
+        Formatter f = new Formatter();
+        f.format("select * from %s where %s like \'%%%s%%\' and %s!=0;",
+                getTableName(), getDescriptionField(), filterValue, getQualityField());
+        return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectAllDevices() {
-        String sql = "select * from " + getTableName();
-        return jdbcTemplate.query(sql, new DeviceMapper());
+        Formatter f = new Formatter();
+        f.format("select * from %s where %s!=0;",
+                getTableName(), getQualityField());
+        return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectDeviceFilteredBrand() {
-        String sql = "select * from " + getTableName() + " where " + getBrandField() + "='" + filterValue + "';";
-        return jdbcTemplate.query(sql, new DeviceMapper());
+        Formatter f = new Formatter();
+        f.format("select * from %s where %s='%s' and %s!=0;",
+                getTableName(), getBrandField(), filterValue, getQualityField());
+        return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectDeviceFilteredPriceLess() {
-        String sql = "select * from " + getTableName() + " where " + getPriceField() + "<=" + filterValue + ";";
-        return jdbcTemplate.query(sql, new DeviceMapper());
+        Formatter f = new Formatter();
+        f.format("select * from %s where %s <= %s and %s!=0;",
+                getTableName(), getPriceField(), filterValue, getQualityField());
+        return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectDeviceFilteredPriceMore() {
-        String sql = "select * from " + getTableName() + " where " + getPriceField() + ">=" + filterValue + ";";
-        return jdbcTemplate.query(sql, new DeviceMapper());
+        Formatter f = new Formatter();
+        f.format("select * from %s where %s >= %s and %s!=0;",
+                getTableName(), getPriceField(), filterValue, getQualityField());
+        return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private <T> List<T> selectDeviceFilteredRating() {
-        String sql = "select * from " + getTableName() + " where " + getTypeField() + "='" + filterValue + "' ORDER BY " + getRatingField() + " DESC;";
-        return jdbcTemplate.query(sql, new DeviceMapper());
+        Formatter f = new Formatter();
+        f.format("select * from %s where %s='%s' and %s!=0 ORDER BY %s DESC;",
+                getTableName(), getTypeField(), filterValue, getQualityField(), getRatingField());
+        return jdbcTemplate.query(f.toString(), new DeviceMapper());
     }
 
     private String getDBName() {
@@ -113,5 +128,9 @@ public class SelectDevicesServiceAction {
 
     private String getRatingField() {
         return "rating";
+    }
+
+    private String getQualityField() {
+        return "quality";
     }
 }

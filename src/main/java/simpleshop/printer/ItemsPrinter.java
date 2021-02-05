@@ -1,8 +1,8 @@
 package simpleshop.printer;
 
 import dnl.utils.text.table.TextTable;
-import exceptions.EmptyResultException;
-import exceptions.UnknownFilterException;
+import simpleshop.exceptions.EmptyResultException;
+import simpleshop.exceptions.UnknownFilterException;
 import org.apache.commons.lang.WordUtils;
 import simpleshop.DB.DBConnector;
 import simpleshop.action.SelectDevicesServiceAction;
@@ -37,13 +37,14 @@ public class ItemsPrinter {
         String[][] data = new String[allItems.size()][columnsName.size()];
         int i = 0;
         for (Device device : allItems) {
-            data[i][0] = device.getType();
-            data[i][1] = device.getBrand();
-            data[i][2] = device.getModel();
-            data[i][3] = device.getDescription();
-            data[i][4] = device.getPrice().toString();
-            data[i][5] = device.getRating().toString();
-            data[i][6] = String.valueOf(device.getQuality());
+            data[i][0] = String.valueOf(device.getId());
+            data[i][1] = device.getType();
+            data[i][2] = device.getBrand();
+            data[i][3] = device.getModel();
+            data[i][4] = device.getDescription();
+            data[i][5] = device.getPrice().toString();
+            data[i][6] = device.getRating().toString();
+            data[i][7] = String.valueOf(device.getQuality());
             i++;
         }
         return data;
@@ -53,7 +54,7 @@ public class ItemsPrinter {
         SelectDevicesServiceAction selectDevicesService = new SelectDevicesServiceAction("getTableColumnsName", null, dbConnector.prepareJDBC());
         List<String> columns = selectDevicesService.makeSelect();
         List<String> upperColumnsName = columns.stream()
-                .filter(item -> !item.equals("id"))
+//                .filter(item -> !item.equals("id"))
                 .map(item -> WordUtils.capitalize(item))
                 .collect(Collectors.toList());
         return upperColumnsName;
@@ -65,10 +66,11 @@ public class ItemsPrinter {
         }
     }
 
-    public void showItems(String filterType, String filterValue) {
+    public List<Device> showItems(String filterType, String filterValue) {
+        List<Device> devices = null;
         SelectDevicesServiceAction selectDevicesService = new SelectDevicesServiceAction(filterType, filterValue, dbConnector.prepareJDBC());
         try {
-            List<Device> devices = selectDevicesService.makeSelect();
+            devices = selectDevicesService.makeSelect();
             printer.itemsPrinter(devices);
         } catch (EmptyResultException ex) {
             System.err.println(ex.getMessage());
@@ -77,6 +79,7 @@ public class ItemsPrinter {
         } catch (ConnectException ex) {
             System.err.println(ex.getMessage());
         }
+        return devices;
     }
 
 }

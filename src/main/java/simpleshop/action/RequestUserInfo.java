@@ -1,6 +1,8 @@
 package simpleshop.action;
 
-import exceptions.UnknownFilterException;
+import simpleshop.bucket.ItemBucket;
+import simpleshop.device.Device;
+import simpleshop.exceptions.UnknownFilterException;
 import simpleshop.DB.DBConnector;
 import simpleshop.printer.ItemsPrinter;
 
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class RequestUserInfo {
-
+    private static ItemBucket bucket = ItemBucket.getInstance();
     private static ItemsPrinter printer = ItemsPrinter.getInstance();
     private static DBConnector dbConnector = DBConnector.getInstance();
     private static RequestUserInfo instance;
@@ -21,44 +23,47 @@ public class RequestUserInfo {
         return instance;
     }
 
-    public void getBrand(Scanner scanner) {
-        System.out.println("Введите производителя:");
-        String brand = scanner.nextLine();
-        printer.showItems("brand", brand);
+    private String getTextFromUser(String message, Scanner scanner) {
+        System.out.println(message);
+        String input = scanner.nextLine();
+        return input;
     }
 
-    public void getKeyWord(Scanner scanner) {
-        System.out.println("Введите слово для поиска:");
-        String keyWord = scanner.nextLine();
-        printer.showItems("keyWord", keyWord);
-    }
-
-    public void getPrice(String point, Scanner scanner) {
-        String filterType;
-        if (point == "2") {
-            System.out.println("Введите минимальную цену:");
-            filterType = "moreThanPrice";
-        } else {
-            System.out.println("Введите максимальную цену:");
-            filterType = "lessThanPrice";
-        }
+    private int getNumberFromUser(String message, Scanner scanner) {
+        int price;
+        System.out.println(message);
         while (true) {
             try {
-                int price = scanner.nextInt();
+                price = scanner.nextInt();
                 scanner.nextLine();
-                printer.showItems(filterType, String.valueOf(price));
                 break;
             } catch (IllegalArgumentException ex) {
                 System.out.println();
                 continue;
             }
         }
+        return price;
     }
 
-    private String getCategoryName(Scanner scanner) {
-        System.out.println("Какая категория товаров интересует?");
-        String category = scanner.nextLine();
-        return category;
+    public void getBrand(Scanner scanner) {
+        printer.showItems("brand", getTextFromUser("Введите производителя:", scanner));
+    }
+
+    public void getKeyWord(Scanner scanner) {
+        printer.showItems("keyWord", getTextFromUser("Введите слово для поиска:", scanner));
+    }
+
+    public void getPrice(String point, Scanner scanner) {
+        String filterType;
+        int price;
+        if (point == "2") {
+            price = getNumberFromUser("Введите минимальную цену:", scanner);
+            filterType = "moreThanPrice";
+        } else {
+            price = getNumberFromUser("Введите максимальную цену:", scanner);
+            filterType = "lessThanPrice";
+        }
+        printer.showItems(filterType, String.valueOf(price));
     }
 
     private void categoriesList() throws UnknownFilterException, ConnectException {
@@ -70,14 +75,22 @@ public class RequestUserInfo {
 
     public void sortByRating(Scanner scanner) throws UnknownFilterException, ConnectException {
         categoriesList();
-        String category = getCategoryName(scanner);
-        printer.showItems("findByRating", category);
+        printer.showItems("findByRating", getTextFromUser("Какая категория товаров интересует?", scanner));
     }
 
-    public void prepareByeDevice(Scanner scanner) throws UnknownFilterException, ConnectException {
+    public void prepareBuyDevice(Scanner scanner) throws UnknownFilterException, ConnectException {
         categoriesList();
-        String category = getCategoryName(scanner);
+        String category = getTextFromUser("Выберите категорию", scanner);
         System.out.println("Список доступных товаров");
-        printer.showItems("findByRating", category);
+        List<Device> devices = printer.showItems("findByRating", category);
+        int id = getNumberFromUser("Введите id товара, который хотите купить: ", scanner);
+        int i;
+        for (i = 0; i < devices.size(); i++) {
+            if (devices.get(i).getId() == id){
+                break;
+            }
+        }
+        bucket.addItemToBucket(devices.get(i));
+        System.out.println(bucket.getUsersBucket().get(0).getDescription());
     }
 }

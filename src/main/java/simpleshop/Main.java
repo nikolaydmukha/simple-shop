@@ -1,6 +1,7 @@
 package simpleshop;
 
-import exceptions.UnknownFilterException;
+import simpleshop.bucket.ItemBucket;
+import simpleshop.exceptions.UnknownFilterException;
 import simpleshop.action.RequestUserInfo;
 import simpleshop.printer.ItemsPrinter;
 
@@ -48,11 +49,12 @@ public class Main {
                     break;
                 case "5":
                     getUserWish.getKeyWord(scanner);
+                    break;
                 case "6":
                     getUserWish.sortByRating(scanner);
                     break;
                 case "7":
-                    getUserWish.prepareByeDevice(scanner);
+                    getUserWish.prepareBuyDevice(scanner);
                     break;
                 default:
                     throw new UnknownFilterException("Нет подходящего пункта меню!");

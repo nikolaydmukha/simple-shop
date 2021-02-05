@@ -1,4 +1,4 @@
-package exceptions;
+package simpleshop.exceptions;
 
 public class UnknownFilterException extends Exception{
 
